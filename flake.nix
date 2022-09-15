@@ -2,7 +2,7 @@
   description = "Packaging EMQX";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/release-22.05";
+    nixpkgs.url = "github:imsl/nixpkgs/rebar3-fixes";
   };
 
   outputs = { self, nixpkgs }: {
@@ -12,11 +12,26 @@
       let
 
         inherit (nixpkgs.legacyPackages.x86_64-linux)
-          rebar3 fetchFromGitHub;
+          beamPackages
+          cacert
+          callPackage
+          fetchFromGitHub
+          fetchgit
+          gitMinimal
+          ;
 
-      in {
+        inherit (beamPackages)
+          rebar3
+          rebar3Relx
+          rebar3WithPlugins
+          fetchRebar3Deps
+          ;
 
-        inherit rebar3;
+      in rec {
+
+        rebar3-with-nix = rebar3WithPlugins {
+          globalPlugins = [ beamPackages.rebar3-nix ];
+        };
 
         rebar3-emqx = rebar3.overrideAttrs (_: drv: rec {
           pname = "rebar3";
@@ -37,6 +52,17 @@
               --replace '{cmd, "git describe --tags"}' '"${version}"'
           '';
         });
+
+        emqx = beamPackages.callPackage ./emqx.nix {
+          rebar3Relx = rebar3Relx.override {
+            rebar3WithPlugins = attrs: rebar3WithPlugins (attrs // {
+              rebar3 = rebar3-emqx;
+            });
+          };
+          fetchRebar3Deps = fetchRebar3Deps.override {
+            rebar3 = rebar3-emqx;
+          };
+        };
 
       };
 

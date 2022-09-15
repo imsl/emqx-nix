@@ -2,16 +2,16 @@
   "nodes": {
     "nixpkgs": {
       "locked": {
-        "lastModified": 1663014369,
-        "narHash": "sha256-Nest75f7kVXPS9Hy+crY7q/HDyY4jgouDXqg6CTAXNs=",
-        "owner": "NixOS",
+        "lastModified": 1663273749,
+        "narHash": "sha256-CK90laMnexVOiLfM+RFNUORIIdjIhdruA2OEsgKOf1k=",
+        "owner": "imsl",
         "repo": "nixpkgs",
-        "rev": "b03b0add657891ed194348c8c8a1e81246aa2cdf",
+        "rev": "5ca025658f946762a26116666d11665e6f62f1d6",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "release-22.05",
+        "owner": "imsl",
+        "ref": "rebar3-fixes",
         "repo": "nixpkgs",
         "type": "github"
       }
