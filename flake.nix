@@ -68,59 +68,20 @@
         emqxTest = testers.nixosTest {
           name = "emqx";
           nodes = {
-            server = { config, lib, pkgs, ... }: let cfg = config.services.emqx; in {
 
-              imports = lib.singleton {
-                services.emqx.enable = true;
-              };
+            server = { config, lib, pkgs, ... }: {
 
-              options = {
+              imports = [ ./nixos/emqx.nix ];
 
-                services.emqx = {
-
-                  enable = lib.mkEnableOption (lib.mdDoc "EMQX MQTT broker");
-
-                  stateDir = lib.mkOption {
-                    type = lib.types.str;
-                    default = "/var/lib/emqx";
-                    description = lib.mdDoc ''
-                      State and configuration directory EMQX will use.
-                    '';
-                  };
-
-                };
-
-              };
-
-              config = lib.mkIf cfg.enable {
-
-                systemd.services.emqx = {
-                  description = "emqx daemon";
-                  wantedBy = [ "multi-user.target" ];
-                  after = [ "network.target" ];
-                  path = with pkgs; [
-                    bash gawk inetutils
-                  ];
-                  environment = {
-                    EMQX_NODE__DATA_DIR = cfg.stateDir;
-                  };
-                  serviceConfig = {
-                    ExecStart = "${emqx}/bin/emqx foreground";
-                    LimitNOFILE = 1048576;
-                    TimeoutStopSec = "120s";
-                    Restart = "on-failure";
-                    RestartSec = "120s";
-
-                    StateDirectory =
-                      lib.mkIf (cfg.stateDir == "/var/lib/emqx") "emqx";
-                  };
-                };
-
+              services.emqx = {
+                enable = true;
+                package = emqx;
               };
 
             };
 
             #client = { };
+
           };
 
           testScript = ''
