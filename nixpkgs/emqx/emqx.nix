@@ -241,7 +241,9 @@ in rebar3Relx {
 
   installPhase = ''
     mkdir -p $out/bin
-    mv _build $out/
-    ln -svt $out/bin $out/_build/emqx/rel/emqx/bin/emqx
+    rm "_build/emqx/rel/emqx/emqx-${version}.tar.gz"
+    rm -r "_build/emqx/checkouts"
+    mv _build $out/dist
+    ln -svt $out/bin $out/dist/emqx/rel/emqx/bin/emqx
   '';
 }
